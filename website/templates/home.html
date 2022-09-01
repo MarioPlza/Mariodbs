@@ -3,22 +3,63 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
-<h1 align="center">Notes</h1>
-<ul class="list-group list-group-flush" id="notes">
-    {% for note in user.notes %}
-    <li class="list-group-item">
-    {{ note.data }}
-        <button type="button" class="close" onClick="deleteNote({{ note.id }})">
-            <span aria-hidden="true" >&times;</span>
-        </button>
-    </li>
-    {% endfor %}
-</ul>
-<form method="POST">
-    <textarea name="note" id="note" class="form-control"></textarea>
-    <br />
-    <div align="center">
-        <button type="submit" class="btn btn-primary">Add Note</button>
-    </div>
-</form>
+<h1 align="center">Summary</h1>
+<div>
+   <h5>User fullname: {{ user.first_name }}</h5>
+    <h5>Role: {{ user.role }}</h5>
+    <h5>Team: {{ user.team }}</h5>
+    <h5>Number of tickets: {{ user.tickets|length }}</h5>
+    <h5>Company: {{ user.company_id}}</h5>
+</div>
+{% if user.role == "admin" %}
+<h1 align="center">Users</h1>
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">User ID</th>
+      <th scope="col">Full Name</th>
+      <th scope="col">Team</th>
+      <th scope="col">Role</th>
+        <th scope="col">Company ID</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for a in company.users %}
+  <form method="POST">
+    <tr>
+      <th scope="row" name="myid">{{ a.id }}</th>
+      <td>{{ a.first_name }}</td>
+        <td>
+            <select name="myteam" class="form-select" aria-label="Default select example">
+              <option selected>{{ a.team }}</option>
+              <option value="Operations">Operations</option>
+              <option value="Support">Support</option>
+            </select>
+      </td>
+        <td>
+            <select name="myrole" class="form-select" aria-label="Default select example">
+              <option selected>{{ a.role }}</option>
+              <option value="Operations Analyst">Operations Analyst</option>
+              <option value="Support Specialist">Support Specialist</option>
+            </select>
+      </td>
+        <td>{{ a.company_id }}</td>
+        <td>
+
+        <button type="submit" class="btn btn-primary"  href="{{ url_for('views.update_user', id= a.id) }}">
+            <i class="material-icons" style="font-size:16px">Update User</i></button>
+        </td>
+
+    </tr>
+    </form>
+   {% endfor %}
+  </tbody>
+</table>
+  {% else %}
+
+            <div align="center">
+                <a class="btn btn-primary" href="/tickets">Go to my tickets</a>
+            </div>
+
+{% endif %}
 {% endblock %}
